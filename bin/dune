@@ -1,0 +1,4 @@
+(executable
+ (public_name OLith)
+ (name main)
+ (libraries OLith))

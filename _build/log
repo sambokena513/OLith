@@ -1,0 +1,6 @@
+# dune init proj OLith
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /home/ofenbauer/.cache/dune/db
+# Workspace root: /home/ofenbauer/Projects/MixedProjects/OLith
+# Auto-detected concurrency: 16
