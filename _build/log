@@ -1,6 +1,23 @@
-# dune init proj OLith
+# dune build
 # OCAMLPARAM: unset
 # Shared cache: enabled-except-user-rules
 # Shared cache location: /home/ofenbauer/.cache/dune/db
 # Workspace root: /home/ofenbauer/Projects/MixedProjects/OLith
 # Auto-detected concurrency: 16
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /home/ofenbauer/.opam/default/bin/ocamlc.opt -config > /tmp/dune_47914e_output
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlc.opt -short-paths -keep-locs -warn-error +a -w -53 -w -49 -nopervasives -nostdlib -g -bin-annot -bin-annot-occurrences -I bin/.main.eobjs/byte -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe.cmo -c -impl bin/.main.eobjs/dune__exe.ml-gen)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlc.opt -short-paths -keep-locs -warn-error +a -g -bin-annot -bin-annot-occurrences -I bin/.main.eobjs/byte -I lib/.OLith.objs/byte -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/byte/dune__exe__Main.cmi -c -intf bin/main.mli)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -w -53 -w -49 -nopervasives -nostdlib -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -cmi-file bin/.main.eobjs/byte/dune__exe.cmi -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe.cmx -c -impl bin/.main.eobjs/dune__exe.ml-gen)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlc.opt -short-paths -keep-locs -warn-error +a -g -bin-annot -bin-annot-occurrences -I bin/.main.eobjs/byte -I lib/.OLith.objs/byte -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/byte/dune__exe__Lexer.cmo -c -impl bin/lexer.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file bin/.main.eobjs/byte/dune__exe__Main.cmi -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file bin/.main.eobjs/byte/dune__exe__Lexer.cmi -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/native/dune__exe__Lexer.cmx -c -impl bin/lexer.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -o bin/main.exe lib/OLith.cmxa bin/.main.eobjs/native/dune__exe.cmx bin/.main.eobjs/native/dune__exe__Lexer.cmx bin/.main.eobjs/native/dune__exe__Main.cmx)

@@ -5,11 +5,11 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github sambokena513/OLith))
 
-(authors "Author Name <author@example.com>")
+(authors "Ofenbauer <sambokena@mail.com>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "Ofenbauer <sambokena@mail.com>")
 
 (license LICENSE)
 
