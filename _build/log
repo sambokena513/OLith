@@ -1,4 +1,4 @@
-# dune utop
+# dune build
 # OCAMLPARAM: unset
 # Shared cache: enabled-except-user-rules
 # Shared cache location: /home/ofenbauer/.cache/dune/db
@@ -13,4 +13,16 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /home/ofenbauer/.opam/default/bin/ocamlc.opt -config > /tmp/dune_f1ec20_output
+$ /home/ofenbauer/.opam/default/bin/ocamlc.opt -config > /tmp/dune_6e2d55_output
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -w -53 -w -49 -nopervasives -nostdlib -g -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file lib/.OLith.objs/byte/oLith.cmi -no-alias-deps -opaque -o lib/.OLith.objs/native/oLith.cmx -c -impl lib/oLith.ml-gen)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlc.opt -short-paths -keep-locs -warn-error +a -g -bin-annot -bin-annot-occurrences -I test/.test_OLith.eobjs/byte -I lib/.OLith.objs/byte -no-alias-deps -opaque -o test/.test_OLith.eobjs/byte/dune__exe__Test_OLith.cmi -c -intf test/test_OLith.mli)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlc.opt -short-paths -keep-locs -warn-error +a -g -bin-annot -bin-annot-occurrences -I bin/.main.eobjs/byte -I lib/.OLith.objs/byte -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe__Main.cmi -c -intf bin/main.mli)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file lib/.OLith.objs/byte/oLith__Test.cmi -no-alias-deps -opaque -open OLith -o lib/.OLith.objs/native/oLith__Test.cmx -c -impl lib/test.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I test/.test_OLith.eobjs/byte -I test/.test_OLith.eobjs/native -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file test/.test_OLith.eobjs/byte/dune__exe__Test_OLith.cmi -no-alias-deps -opaque -o test/.test_OLith.eobjs/native/dune__exe__Test_OLith.cmx -c -impl test/test_OLith.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file bin/.main.eobjs/byte/dune__exe__Main.cmi -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file lib/.OLith.objs/byte/oLith__Parser.cmi -no-alias-deps -opaque -open OLith -o lib/.OLith.objs/native/oLith__Parser.cmx -c -impl lib/parser.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -I lib/.OLith.objs/byte -I lib/.OLith.objs/native -cmi-file lib/.OLith.objs/byte/oLith__Lexer.cmi -no-alias-deps -opaque -open OLith -o lib/.OLith.objs/native/oLith__Lexer.cmx -c -impl lib/lexer.ml)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -a -o lib/OLith.cmxa lib/.OLith.objs/native/oLith.cmx lib/.OLith.objs/native/oLith__Lexer.cmx lib/.OLith.objs/native/oLith__Parser.cmx lib/.OLith.objs/native/oLith__Test.cmx)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -shared -linkall -I lib -o lib/OLith.cmxs lib/OLith.cmxa)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -o test/test_OLith.exe lib/OLith.cmxa test/.test_OLith.eobjs/native/dune__exe__Test_OLith.cmx)
+$ (cd _build/default && /home/ofenbauer/.opam/default/bin/ocamlopt.opt -short-paths -keep-locs -warn-error +a -g -o bin/main.exe lib/OLith.cmxa bin/.main.eobjs/native/dune__exe__Main.cmx)

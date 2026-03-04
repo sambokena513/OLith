@@ -19,6 +19,7 @@ let rec parse
   (acc : (Lexer.pos_info * (sexpr, error) result) list)
   =
   let open Lexer in
+  let finalize_pos st en = {en with start = st.start} in
   match tokens with
   | [] -> List.rev acc
   | (pos, tok) :: rest -> (
@@ -47,6 +48,6 @@ let rec parse
       | UNQUOTE -> parse rest ((ps, (SAtom (ASymbol "unquote")) :: top) :: stck) acc
       | UNQUOTE_SPLICE -> parse rest ((ps, (SAtom (ASymbol "unquote_splice")) :: top) :: stck) acc
       | TLPAREN -> parse rest ((ps, []) :: stck) acc
-      | TRPAREN -> parse rest stck ((ps, Ok (SList (List.rev top))) :: acc)
+      | TRPAREN -> parse rest stck ((finalize_pos ps pos, Ok (SList (List.rev top))) :: acc)
     )
   )
