@@ -19,9 +19,13 @@ let rec parse
   (acc : (Lexer.pos_info * (sexpr, error) result) list)
   =
   let open Lexer in
-  let finalize_pos st en = {en with start = st.start} in
+  let update_pos st en = {en with start = st.start} in
+  let lift_st (a, _) = (a, Error UnclosedList) in
   match tokens with
-  | [] -> List.rev acc
+  | [] -> (match stck with
+            | [] -> List.rev acc
+            | stck -> List.rev_append (List.map lift_st stck) acc 
+          )
   | (pos, tok) :: rest -> (
     match stck with
     | [] -> (
@@ -39,15 +43,15 @@ let rec parse
     )
     | (ps, top) :: stck -> (
       match tok with
-      | TInt x -> parse rest ((ps, (SAtom (AInt x)) :: top) :: stck) acc
-      | TFloat x -> parse rest ((ps, (SAtom (AFloat x)) :: top) :: stck) acc
-      | TSymbol x -> parse rest ((ps, (SAtom (ASymbol x)) :: top) :: stck) acc
-      | TString x -> parse rest ((ps, (SAtom (AString x)) :: top) :: stck) acc
-      | TChar x -> parse rest ((ps, (SAtom (AChar x)) :: top) :: stck) acc
-      | QUASIQUOTE -> parse rest ((ps, (SAtom (ASymbol "quasiquote")) :: top) :: stck) acc
-      | UNQUOTE -> parse rest ((ps, (SAtom (ASymbol "unquote")) :: top) :: stck) acc
-      | UNQUOTE_SPLICE -> parse rest ((ps, (SAtom (ASymbol "unquote_splice")) :: top) :: stck) acc
-      | TLPAREN -> parse rest ((ps, []) :: stck) acc
-      | TRPAREN -> parse rest stck ((finalize_pos ps pos, Ok (SList (List.rev top))) :: acc)
+      | TInt x -> parse rest (((update_pos ps pos), (SAtom (AInt x)) :: top) :: stck) acc
+      | TFloat x -> parse rest (((update_pos ps pos), (SAtom (AFloat x)) :: top) :: stck) acc
+      | TSymbol x -> parse rest (((update_pos ps pos), (SAtom (ASymbol x)) :: top) :: stck) acc
+      | TString x -> parse rest (((update_pos ps pos), (SAtom (AString x)) :: top) :: stck) acc
+      | TChar x -> parse rest (((update_pos ps pos), (SAtom (AChar x)) :: top) :: stck) acc
+      | QUASIQUOTE -> parse rest (((update_pos ps pos), (SAtom (ASymbol "quasiquote")) :: top) :: stck) acc
+      | UNQUOTE -> parse rest (((update_pos ps pos), (SAtom (ASymbol "unquote")) :: top) :: stck) acc
+      | UNQUOTE_SPLICE -> parse rest (((update_pos ps pos), (SAtom (ASymbol "unquote_splice")) :: top) :: stck) acc
+      | TLPAREN -> parse rest (((update_pos ps pos), []) :: stck) acc
+      | TRPAREN -> parse rest stck ((update_pos ps pos, Ok (SList (List.rev top))) :: acc)
     )
   )
