@@ -9,7 +9,4 @@
   any later version.
 *)
 
-open OLith
-
-let compile source flags =
-  Lexer.lex source
+(* Not implemented yet, currently all code is in /lib, this file will be used for writing bytecode to files and for invoking the compiler on files. *)

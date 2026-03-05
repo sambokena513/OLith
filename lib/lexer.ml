@@ -67,7 +67,7 @@ let lex s =
       else if st.cursor < len then
         ((advance st), false)
       else
-        ((advance st), true)
+        (st, true)
       in
 
     let rec lex_symbol st acc =
@@ -96,7 +96,7 @@ let lex s =
                             Scanf.Scan_failure _ -> ((advance st), Error InvalidStrLit))
         | _, _ -> lex_string (advance st) (c :: acc) escaped
       else
-        ((advance st), Error UnclosedStrLit)
+        (st, Error UnclosedStrLit)
       in
 
     let rec lex_num st acc =
@@ -130,7 +130,7 @@ let lex s =
         with
           Scanf.Scan_failure _ -> ((advance st), Error InvalidCharLit)
       else
-        ((advance st), Error UnclosedCharLit)
+        (st, Error UnclosedCharLit)
       in
 
     let rec step st =
