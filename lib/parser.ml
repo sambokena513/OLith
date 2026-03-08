@@ -25,8 +25,11 @@ type sexpr =
 type error =
   | UnclosedList of Lexer.pos_info
   | UnmatchedRPAREN of Lexer.pos_info
+  | MissingTarget of Lexer.pos_info
 
-type frame = sexpr list with_pos
+type frame =
+  | FList of sexpr list with_pos
+  | FWrap of string with_pos
 
 let rec parse
   (tokens : (Lexer.pos_info * Lexer.token) list)
@@ -34,20 +37,32 @@ let rec parse
   (acc : ((sexpr, error) result) list)
   =
   let open Lexer in
-  let ( &:= ) st en = {en with start = st.start} in
+  let ( &= ) st en = {en with start = st.start} in
+  let lift frame =
+    match frame with
+    | FList {p; _}
+    | FWrap {p; _} -> Error (UnclosedList p)
+  in
   match tokens with
   | [] -> (match stck with
             | [] -> List.rev acc
-            | stck -> List.rev_append (List.map (fun v -> Error (UnclosedList v.p)) stck) acc 
+            | stck -> List.rev_append (List.map lift stck) acc 
           )
   | (pos, tok) :: rest -> (
-    let push_atom atom =
+    let rec push_expr expr stck =
       match stck with
-      | [] -> parse rest stck (Ok (SAtom {p = pos; v = atom; }) :: acc)
-      | top :: stck -> parse rest ({p = top.p &:= pos; v = (SAtom {p = pos; v = atom; }) :: top.v} :: stck) acc
+      | [] -> parse rest stck (Ok expr :: acc)
+      | FList {p; v} :: stck -> parse rest (FList {p = p &= pos; v = expr :: v} :: stck) acc
+      | FWrap {p; v} :: stck -> push_expr (SList {p = p &= pos; v = [SAtom {p = pos; v = ASymbol v}; expr]}) stck
     in
-    let push_list init wrapper =
-      parse rest ({p = pos; v = init} :: stck) acc
+    let push_atom atom = push_expr (SAtom {p = pos; v = atom}) stck in
+    let push_frame init = parse rest (FList {p = pos; v = init} :: stck) acc in
+    let push_frame_w init = parse rest (FWrap {p = pos; v = init} :: stck) acc in
+    let pop_frame stck =
+      match stck with
+      | [] -> parse rest [] (Error (UnmatchedRPAREN pos) :: acc)
+      | FList {p; v} :: stck -> push_expr (SList {p = p &= pos; v = List.rev v; }) stck
+      | FWrap {p; _} :: stck -> parse rest stck (Error (MissingTarget p) :: acc)
     in
     match tok with
     | TInt x -> push_atom (AInt x)
@@ -55,14 +70,9 @@ let rec parse
     | TSymbol x -> push_atom (ASymbol x)
     | TString x -> push_atom (AString x)
     | TChar x -> push_atom (AChar x)
-    | QUASIQUOTE -> push_atom (ASymbol "quasiquote")
-    | UNQUOTE -> push_atom (ASymbol "unquote")
-    | UNQUOTE_SPLICE -> push_atom (ASymbol "unquote_splice")
-    | TLPAREN -> push_list [] false
-    | TRPAREN -> (
-      match stck with
-      | [] -> parse rest [] (Error (UnmatchedRPAREN pos) :: acc)
-      | h1 :: h2 :: stck -> parse rest ({p = h2.p &:= pos; v = SList {p = h1.p &:= pos; v = List.rev h1.v; } :: h2.v} :: stck) acc
-      | h :: [] -> parse rest [] (Ok (SList {p = h.p &:= pos; v = List.rev h.v; }) :: acc)
-    )
+    | QUASIQUOTE -> push_frame_w "quasiquote"
+    | UNQUOTE -> push_frame_w "unquote"
+    | UNQUOTE_SPLICE -> push_frame_w "unquote_splice"
+    | TLPAREN -> push_frame []
+    | TRPAREN -> pop_frame stck
   )
