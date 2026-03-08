@@ -9,6 +9,8 @@
   any later version.
 *)
 
+type 'a with_pos = { p : Lexer.pos_info; v : 'a  }
+
 type atom =
   | AInt of int
   | AFloat of float
@@ -17,30 +19,35 @@ type atom =
   | AChar of char
 
 type sexpr =
-  | SAtom of Lexer.pos_info * atom
-  | SList of Lexer.pos_info * sexpr list
+  | SAtom of atom with_pos
+  | SList of sexpr list with_pos
 
 type error =
   | UnclosedList of Lexer.pos_info
   | UnmatchedRPAREN of Lexer.pos_info
 
+type frame = sexpr list with_pos
+
 let rec parse
   (tokens : (Lexer.pos_info * Lexer.token) list)
-  (stck : (Lexer.pos_info * sexpr list) list)
+  (stck : frame list)
   (acc : ((sexpr, error) result) list)
   =
   let open Lexer in
-  let update_pos st en = {en with start = st.start} in
+  let ( &:= ) st en = {en with start = st.start} in
   match tokens with
   | [] -> (match stck with
             | [] -> List.rev acc
-            | stck -> List.rev_append (List.map (fun (p, _) -> Error (UnclosedList p)) stck) acc 
+            | stck -> List.rev_append (List.map (fun v -> Error (UnclosedList v.p)) stck) acc 
           )
   | (pos, tok) :: rest -> (
     let push_atom atom =
       match stck with
-      | [] -> parse rest stck (Ok (SAtom (pos, atom)) :: acc)
-      | (ps, top) :: stck -> parse rest (((update_pos ps pos), (SAtom (pos, atom)) :: top) :: stck) acc
+      | [] -> parse rest stck (Ok (SAtom {p = pos; v = atom; }) :: acc)
+      | top :: stck -> parse rest ({p = top.p &:= pos; v = (SAtom {p = pos; v = atom; }) :: top.v} :: stck) acc
+    in
+    let push_list init wrapper =
+      parse rest ({p = pos; v = init} :: stck) acc
     in
     match tok with
     | TInt x -> push_atom (AInt x)
@@ -51,11 +58,11 @@ let rec parse
     | QUASIQUOTE -> push_atom (ASymbol "quasiquote")
     | UNQUOTE -> push_atom (ASymbol "unquote")
     | UNQUOTE_SPLICE -> push_atom (ASymbol "unquote_splice")
-    | TLPAREN -> parse rest ((pos, []) :: stck) acc
+    | TLPAREN -> push_list [] false
     | TRPAREN -> (
       match stck with
       | [] -> parse rest [] (Error (UnmatchedRPAREN pos) :: acc)
-      | (ps, top) :: (pps, ptop) :: stck -> parse rest ((update_pos pps pos, SList (update_pos ps pos, List.rev top) :: ptop) :: stck) acc
-      | (ps, top) :: [] -> parse rest [] (Ok (SList (update_pos ps pos, List.rev top)) :: acc)
+      | h1 :: h2 :: stck -> parse rest ({p = h2.p &:= pos; v = SList {p = h1.p &:= pos; v = List.rev h1.v; } :: h2.v} :: stck) acc
+      | h :: [] -> parse rest [] (Ok (SList {p = h.p &:= pos; v = List.rev h.v; }) :: acc)
     )
   )
